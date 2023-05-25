@@ -25,17 +25,9 @@ public class MD5 {
         C = 0x98badcfe;
         D = 0x10325476;
     }
-
-    /*
-     * Переместить определенное количество цифр
-     */
     private int shift(int a, int s) {
-        return (a << s) | (a >>> (32 - s)); // При сдвиге вправо старший бит должен быть заполнен нулями вместо бит знака
+        return (a << s) | (a >>> (32 - s));
     }
-
-    /*
-     * Основной цикл
-     */
     private void MainLoop(int[] M) {
         int F, g;
         int a = A;
