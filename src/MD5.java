@@ -19,16 +19,11 @@ public class MD5 {
             4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 4, 11, 16, 23, 6, 10,
             15, 21, 6, 10, 15, 21, 6, 10, 15, 21, 6, 10, 15, 21};
 
-    private void init() {
-        A = 0x67452301;
-        B = 0xefcdab89;
-        C = 0x98badcfe;
-        D = 0x10325476;
-    }
     private int shift(int a, int s) {
         return (a << s) | (a >>> (32 - s));
     }
-    private void MainLoop(int[] M) {
+
+    private void mainLoop(int[] M) {
         int F, g;
         int a = A;
         int b = B;
@@ -58,46 +53,47 @@ public class MD5 {
         B = b + B;
         C = c + C;
         D = d + D;
-
     }
 
     private int[] add(String str) {
         int num = ((str.length() + 8) / 64) + 1;
         int[] strByte = new int[num * 16];
-        for (int i = 0; i < num * 16; i++) {
+        for (int i = 0; i < strByte.length; i++)
             strByte[i] = 0;
-        }
         int i;
         for (i = 0; i < str.length(); i++) {
             strByte[i >> 2] |= str.charAt(i) << ((i % 4) * 8);
         }
         strByte[i >> 2] |= 0x80 << ((i % 4) * 8);
-        strByte[num * 16 - 2] = str.length() * 8;
+        strByte[strByte.length - 2] = str.length() * 8;
         return strByte;
     }
 
     public String getMD5(String source) {
-        init();
+        A = 0x67452301;
+        B = 0xefcdab89;
+        C = 0x98badcfe;
+        D = 0x10325476;
         int[] strByte = add(source);
         for (int i = 0; i < strByte.length / 16; i++) {
             int[] num = new int[16];
             System.arraycopy(strByte, i * 16, num, 0, 16);
-            MainLoop(num);
+            mainLoop(num);
         }
         return changeHex(A) + changeHex(B) + changeHex(C) + changeHex(D);
     }
 
     private String changeHex(int a) {
         StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 4; i++) {
-            builder.append(String.format("%2s", Integer.toHexString(((a >> i * 8) % (1 << 8)) & 0xff)).replace(' ', '0'));
+        for (int i = 8; i > 0; i-=2) {
+            builder.append(Integer.toHexString(a), i - 2, i);
         }
         return builder.toString();
     }
 
     public static void main(String[] args) {
-        MD5 hash = new MD5();
-        String hex = hash.getMD5("hex");
+        MD5 MD5 = new MD5();
+        String hex = MD5.getMD5("hex");
         System.out.println(hex);
     }
 }
